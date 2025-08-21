@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -156,7 +156,7 @@ const AlethiScript: React.FC = () => {
                         errors.push(
                             `#${
                                 index + 1
-                            } "${line}" does not map only to women's script symbols`
+                            } "${line}" does not map only to women&apos;s script symbols`
                         );
                     }
                 } else {
@@ -172,7 +172,7 @@ const AlethiScript: React.FC = () => {
         return errors.length === 0 ? substitutions : null;
     };
 
-    const regenerateWordSubstitutions = () => {
+    const regenerateWordSubstitutions = useCallback(() => {
         const substitutions = generateSubstitutions(
             wordSubstitutionText,
             setWordSubstitutionError,
@@ -182,9 +182,9 @@ const AlethiScript: React.FC = () => {
             Alethi.wordSubstitutions = substitutions;
             generateText();
         }
-    };
+    }, [wordSubstitutionText]);
 
-    const regenerateCharSubstitutions = () => {
+    const regenerateCharSubstitutions = useCallback(() => {
         const regexBuilder = (inputString: string) => {
             const escapedInput = regexEscape(inputString);
             const remainderMatcher = Alethi.symbols
@@ -205,7 +205,7 @@ const AlethiScript: React.FC = () => {
             Alethi.charSubstitutions = substitutions;
             generateText();
         }
-    };
+    }, [charSubstitutionText]);
 
     const getRawLines = (): string[] => {
         return sourceText.trim().toUpperCase().split('\n');
@@ -218,7 +218,9 @@ const AlethiScript: React.FC = () => {
             const subbedWords: string[] = [];
             for (const word of rawWords) {
                 let subbed = false;
-                for (const [regex, symbols] of Alethi.wordSubstitutions) {
+                for (const
+
+ [regex, symbols] of Alethi.wordSubstitutions) {
                     if (regex.test(word)) {
                         subbedWords.push(symbols);
                         subbed = true;
@@ -268,7 +270,7 @@ const AlethiScript: React.FC = () => {
         return tokenRows;
     };
 
-    const generateText = () => {
+    const generateText = useCallback(() => {
         if (!svgRef.current) return;
         const svg = svgRef.current;
         while (svg.hasChildNodes()) {
@@ -354,11 +356,11 @@ const AlethiScript: React.FC = () => {
             'http://www.w3.org/2000/svg',
             'desc'
         );
-        description.textContent = `The text '${sourceText}' displayed in women's script from The Stormlight Archive`;
+        description.textContent = `The text '${sourceText}' displayed in women&apos;s script from The Stormlight Archive`;
         svg.appendChild(description);
 
         displayImage();
-    };
+    }, [sourceText, fgColor, bgColor, transparentBg, align, italicsAngle, strokeWidth, scale, autoHeightMark, format]);
 
     const displayImage = () => {
         if (!svgRef.current || !imageRef.current) return;
@@ -398,7 +400,9 @@ const AlethiScript: React.FC = () => {
     const setBackground = () => {
         if (!svgRef.current || transparentBg) return;
         const svg = svgRef.current;
-        const bg = document.createElementNS(
+        const bg
+
+ = document.createElementNS(
             'http://www.w3.org/2000/svg',
             'rect'
         );
@@ -465,42 +469,33 @@ const AlethiScript: React.FC = () => {
             generateText();
         };
         initialize();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
         generateText();
-    }, [
-        sourceText,
-        fgColor,
-        bgColor,
-        transparentBg,
-        align,
-        italicsAngle,
-        strokeWidth,
-        scale,
-        autoHeightMark,
-        format,
-    ]);
+    }, [generateText, sourceText, fgColor, bgColor, transparentBg, align, italicsAngle, strokeWidth, scale, autoHeightMark, format]);
 
     useEffect(() => {
         regenerateWordSubstitutions();
-    }, [wordSubstitutionText]);
+    }, [regenerateWordSubstitutions]);
 
     useEffect(() => {
         regenerateCharSubstitutions();
-    }, [charSubstitutionText]);
+    }, [regenerateCharSubstitutions]);
+
     return (
         <div className="font-sans">
             <div className="flex flex-col sm:flex-row justify-center items-center gap-5 mb-4 p-10">
                 <div>
-                    <h1 className="text-5xl">Women's Script</h1>
-                    <p className=" py-3">
+                    <h1 className="text-5xl">Women&apos;s Script</h1>
+                    <p className="py-3">
                         Turn text into{' '}
                         <Link
                             className="underline"
                             href="https://coppermind.net/wiki/Women%27s_script"
                         >
-                            women's script
+                            women&apos;s script
                         </Link>{' '}
                         from The Stormlight Archive.
                     </p>
@@ -529,7 +524,7 @@ const AlethiScript: React.FC = () => {
                         className="rounded-lg"
                         ref={imageRef}
                         src=""
-                        alt="Generated Women's Script"
+                        alt="Generated Women&apos;s Script"
                         width={0}
                         height={0}
                     />
@@ -547,17 +542,17 @@ const AlethiScript: React.FC = () => {
                     </AccordionTrigger>
                     <AccordionContent>
                         <p className="mb-4 indent-2">
-                            The symbols in women's script do not directly map to
+                            The symbols in women&apos;s script do not directly map to
                             English letters, but to their sounds. There are also
-                            symbols for the "ch", "sh", and "th" sounds.
+                            symbols for the &quot;ch&quot;, &quot;sh&quot;, and &quot;th&quot; sounds.
                         </p>
                         <p className="mb-4 indent-2">
-                            Women's script also has a symbol that indicates the
+                            Women&apos;s script also has a symbol that indicates the
                             maximum height of symbols in a block of text. By
                             default, this generator will add it automatically at
                             the start of the text and after blank lines. You can
                             turn this off in the formatting section, or add them
-                            in your text by typing "]["
+                            in your text by typing &quot;][&quot;
                         </p>
                         <div className="flex flex-wrap justify-center items-center gap-4">
                             {Alethi.symbols.map((symbol) => (
@@ -666,7 +661,8 @@ const AlethiScript: React.FC = () => {
                                 </TableRow>
                                 <TableRow>
                                     <TableCell>Right align text</TableCell>
-                                    <TableCell>
+                             
+<TableCell>
                                         <input
                                             type="radio"
                                             name="align"
@@ -783,7 +779,7 @@ const AlethiScript: React.FC = () => {
                     <AccordionContent>
                         <p>
                             If there are words or (groups of) characters that do
-                            not map directly to sounds of women's script symbols
+                            not map directly to sounds of women&apos;s script symbols
                             you can either type them phonetically, or enter
                             custom substitutions here. Examples of this could
                             include:
@@ -802,21 +798,21 @@ const AlethiScript: React.FC = () => {
                                     an S)
                                 </li>
                                 <li>
-                                    letters that don't have their own women's
+                                    letters that don&apos;t have their own women&apos;s
                                     script symbol (C, Q, W, X)
                                 </li>
                             </ul>
                         </p>
                         <p>
-                            The available women's script symbols are:{' '}
+                            The available women&apos;s script symbols are:{' '}
                             <span className="font-bold">
                                 {Alethi.symbols.join(', ')}
                             </span>
                         </p>
                         <p>
-                            If you want your substitution to treat "CH", "SH",
-                            or "TH" as separate symbols, separate the symbols
-                            with a backslash "\" (ie "C\H"). This can also be
+                            If you want your substitution to treat &quot;CH&quot;, &quot;SH&quot;,
+                            or &quot;TH&quot; as separate symbols, separate the symbols
+                            with a backslash &quot;\&quot; (ie &quot;C\H&quot;). This can also be
                             used to prevent later character substitutions
                             replacing the symbols from an earlier substitution.
                         </p>
@@ -826,7 +822,7 @@ const AlethiScript: React.FC = () => {
                             </h3>
                             <p>
                                 On each line enter a word, followed by a space,
-                                then the women's script symbols it should be
+                                then the women&apos;s script symbols it should be
                                 replaced with.
                             </p>
                             <Textarea
@@ -856,7 +852,7 @@ const AlethiScript: React.FC = () => {
                             </h3>
                             <p>
                                 On each line enter a series of characters,
-                                followed by a space, then the women's script
+                                followed by a space, then the women&apos;s script
                                 symbols they should be replaced with. These
                                 replacements will all take place in any text not
                                 already replaced by a word substitution, one
